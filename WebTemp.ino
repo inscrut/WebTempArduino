@@ -47,6 +47,7 @@ void loop() {
     Serial.readBytes(get_buff, 3);
     if (strcmp(get_buff, "GET") == 0) {
       snd_data(t, h);
+      memset(utm, 0, sizeof(utm));
     }
     memset(get_buff, 0, sizeof(get_buff));
   }
@@ -58,7 +59,7 @@ void loop() {
       interval_buff = millis();
     }
     if (millis() - interval_up_buff > interval_up) {
-      uptime_data(u);
+      uptime_data(5, u);
       interval_up_buff = millis();
     }
   }
@@ -93,7 +94,7 @@ void print_lcd() {
   lcd.setCursor(0, 2);
   lcd.print("C\xbf""a\xbf""yc:");
   lcd.setCursor(0, 3);
-  lcd.print("Up:");
+  lcd.print("Last:");
 }
 
 void print_temp(int temp) {
@@ -125,7 +126,7 @@ void print_hum(int hum) {
   lcd.print("%");
 }
 
-void uptime_data(int t[]) {
+void uptime_data(int offset, int t[]) {
   t[2]++;
   if (t[2] >= 60) {
     t[2] = 0;
@@ -135,22 +136,22 @@ void uptime_data(int t[]) {
     t[1] = 0;
     t[0]++;
   }
-  lcd.setCursor(3, 3);
+  lcd.setCursor(offset, 3);
 
   if (t[0] < 10) {
-    for (int i = 3; i < 9; i++) lcd.print(" ");
+    for (int i = offset; i < 9; i++) lcd.print(" ");
     lcd.print(t[0]);
   }
   else if (t[0] >= 10 && t[0] < 100) {
-    for (int i = 3; i < 8; i++) lcd.print(" ");
+    for (int i = offset; i < 8; i++) lcd.print(" ");
     lcd.print(t[0]);
   }
   else if (t[0] >= 100 && t[0] < 1000) {
-    for (int i = 3; i < 7; i++) lcd.print(" ");
+    for (int i = offset; i < 7; i++) lcd.print(" ");
     lcd.print("\xd9"" ");
   }
   else if (t[0] >= 1000 && t[0] < 10000) {
-    for (int i = 3; i < 6; i++) lcd.print(" ");
+    for (int i = offset; i < 6; i++) lcd.print(" ");
     lcd.print(t[0]);
   }
   lcd.print(":");
